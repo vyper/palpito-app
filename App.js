@@ -1,58 +1,68 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
-  Platform,
-  StyleSheet,
+  ActivityIndicator,
+  AsyncStorage,
+  Button,
   Text,
   View
 } from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import Bets from './Bets';
+import LoginForm from './LoginForm';
 
-type Props = {};
-export default class App extends Component<Props> {
+export default class App extends Component {
+  state = {
+    logged:      false,
+    loading:     true,
+    accessToken: '',
+  }
+
+  componentDidMount = async () =>  {
+    let accessToken = await this.getAccessToken();
+
+    if (accessToken !== null) {
+      this.setState({
+        accessToken: accessToken,
+        logged: accessToken.length > 1 ? true : false,
+      });
+    }
+
+    this.setState({ loading: false });
+  }
+
+  getAccessToken() {
+    try {
+      return AsyncStorage.getItem('@Palpito:AccessToken');;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
   render() {
+    if (this.state.loading) {
+      return (
+        <View style={{ marginTop: 50 }}>
+          <ActivityIndicator size="large" />
+        </View>
+      );
+    }
+
+    if (!this.state.logged) {
+      return (
+        <LoginForm />
+      );
+    }
+
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+      <View style={{ marginTop: 50 }}>
+        <Bets accessToken={ this.state.accessToken } />
+
+        <Button
+          title='Clear'
+          onPress={ () => { AsyncStorage.clear() }}
+        />
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
