@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
-  AsyncStorage,Button,
+  Button,
   View,
   Text,
   TextInput,
@@ -9,38 +9,8 @@ import {
 
 export default class LoginForm extends Component {
   state = {
-    access_token: '',
     email:        '',
     password:     '',
-    loading:      false,
-  }
-
-  login = async () => {
-    // TODO Improve validation
-    if (this.state.email.length > 1 && this.state.password.length > 1) {
-      this.setState({ loading: true });
-
-      auth = await this.requestLogin();
-      try {
-        AsyncStorage.setItem('@Palpito:AccessToken', auth.access_token);
-        console.log(auth);
-      } catch (error) {
-        console.log(error);
-      }
-
-      this.setState({ loading: false });
-    }
-  }
-
-  requestLogin() {
-    const formData = new FormData();
-    formData.append('username',   this.state.email);
-    formData.append('password',   this.state.password);
-    formData.append('grant_type', 'password');
-
-    return fetch('http://www.palpito.com.br/oauth/token', { method: 'POST', body: formData })
-            .then((response) => response.json())
-            .catch(console.error);
   }
 
   render() {
@@ -62,9 +32,11 @@ export default class LoginForm extends Component {
           onChangeText={password => this.setState({ password })}
         />
 
-        { this.state.loading
+        <Text style={{ color: 'red' }}>{this.props.error}</Text>
+
+        { this.props.loading
             ? <ActivityIndicator size="large" />
-            : <Button title="Entrar!" onPress={() => this.login() } /> }
+            : <Button title="Entrar!" onPress={() => this.props.action(this.state.email, this.state.password) } /> }
       </View>
     )
   }
