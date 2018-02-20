@@ -1,21 +1,19 @@
 import React, { Component } from 'react';
-import {
-  ActivityIndicator,
-  Button,
-  View,
-  Text,
-  TextInput,
-} from 'react-native';
+import { Button, Text, TextInput, View } from 'react-native';
 
-export default class LoginForm extends Component {
+import { onSignIn } from '../auth';
+
+export default class SignIn extends Component {
   state = {
-    email:        '',
-    password:     '',
+    email: '',
+    password: '',
   }
 
   render() {
+    const { navigate } = this.props.navigation;
+
     return (
-      <View style={{ flex: 1, marginTop: 30 }}>
+      <View>
         <TextInput
           placeholder="E-mail"
           autoCorrect={false}
@@ -32,12 +30,13 @@ export default class LoginForm extends Component {
           onChangeText={password => this.setState({ password })}
         />
 
-        <Text style={{ color: 'red' }}>{this.props.error}</Text>
-
-        { this.props.loading
-            ? <ActivityIndicator size="large" />
-            : <Button title="Entrar!" onPress={() => this.props.action(this.state.email, this.state.password) } /> }
+        <Button
+          title="Sign In"
+          onPress={() => {
+            onSignIn(this.state.email, this.state.password).then(accessToken => navigate('SignedIn'));
+          }}
+        />
       </View>
-    )
+    );
   }
 }

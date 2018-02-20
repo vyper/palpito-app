@@ -1,27 +1,48 @@
 import React, { Component } from 'react';
-import { Alert, FlatList, Text, TouchableHighlight, View } from 'react-native';
+import { Alert, Button, FlatList, Text, TouchableHighlight, View } from 'react-native';
+
+import { currentSignedUser } from '../auth';
+import { onSignOut } from '../auth';
 
 export default class Bets extends Component {
   state = {
-    bets: []
+    accessToken: '',
+    bets: [],
   }
 
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params || {};
+
+    return {
+      headerRight: (
+        <Button
+          title="Sign Out"
+          onPress={() => {
+            onSignOut().then(() => navigation.navigate('SignedOut'));
+          }}
+        />
+      ),
+    };
+  };
+
   async componentWillMount() {
-    const bets = await this.requestBets();
+    let accessToken = await currentSignedUser();
+    this.setState({ accessToken });
+    let bets = await this.requestBets();
     console.log(bets);
     this.setState({ bets });
   }
 
   requestBets() {
     return fetch('http://palpito.com.br/bets.json?group_id=13', {
-      headers: { Authorization: 'Bearer ' + this.props.accessToken }
+      headers: { Authorization: 'Bearer ' + this.state.accessToken }
     }).then((response) => response.json())
     .catch((error) => {
       console.error('error: ', error);
     });
   }
 
-  _keyExtractor = (item, index) => item.id;
+  _keyExtractor = (item, index) => item.id.toString();
 
   _renderItem = ({item}) => (
     <TouchableHighlight onPress={() => { Alert.alert(`open ${item.id}`) }}>
@@ -37,11 +58,13 @@ export default class Bets extends Component {
 
   render() {
     return (
-      <FlatList
-        data={this.state.bets}
-        keyExtractor={this._keyExtractor}
-        renderItem={this._renderItem}
-      />
+      <View>
+        <FlatList
+          data={this.state.bets}
+          keyExtractor={this._keyExtractor}
+          renderItem={this._renderItem}
+        />
+      </View>
     );
   }
 }
