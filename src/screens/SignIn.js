@@ -31,7 +31,7 @@ export default class SignIn extends Component {
         />
 
         <Button
-          title="Sign In"
+          title="Entrar!"
           onPress={() => {
             onSignIn(this.state.email, this.state.password).then(accessToken => navigate('SignedIn'));
           }}

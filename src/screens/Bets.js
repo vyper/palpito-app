@@ -11,12 +11,10 @@ export default class Bets extends Component {
   }
 
   static navigationOptions = ({ navigation }) => {
-    const params = navigation.state.params || {};
-
     return {
       headerRight: (
         <Button
-          title="Sign Out"
+          title="Sair"
           onPress={() => {
             onSignOut().then(() => navigation.navigate('SignedOut'));
           }}
@@ -44,17 +42,21 @@ export default class Bets extends Component {
 
   _keyExtractor = (item, index) => item.id.toString();
 
-  _renderItem = ({item}) => (
-    <TouchableHighlight onPress={() => { Alert.alert(`open ${item.id}`) }}>
-      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-        <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 5, textAlign: 'right' }}>{item.team_home}</Text>
-        <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 1, textAlign: 'right' }}>{item.team_home_goals}</Text>
-        <Text style={{ fontSize: 10, paddingTop: 15, paddingBottom: 15, flex: 1, textAlign: 'center' }}>x</Text>
-        <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 1, textAlign: 'left' }}>{item.team_away_goals}</Text>
-        <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 5, textAlign: 'left' }}>{item.team_away}</Text>
-      </View>
-    </TouchableHighlight>
-  );
+  _renderItem({ item }) {
+    const { navigate } = this.props.navigation;
+
+    return (
+      <TouchableHighlight onPress={() => { navigate('Bet', { bet: item }) }}>
+        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+          <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 5, textAlign: 'right' }}>{item.team_home}</Text>
+          <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 1, textAlign: 'right' }}>{item.team_home_goals}</Text>
+          <Text style={{ fontSize: 10, paddingTop: 15, paddingBottom: 15, flex: 1, textAlign: 'center' }}>x</Text>
+          <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 1, textAlign: 'left' }}>{item.team_away_goals}</Text>
+          <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 5, textAlign: 'left' }}>{item.team_away}</Text>
+        </View>
+      </TouchableHighlight>
+    );
+  }
 
   render() {
     return (
@@ -66,7 +68,7 @@ export default class Bets extends Component {
         <FlatList
           data={this.state.bets}
           keyExtractor={this._keyExtractor}
-          renderItem={this._renderItem}
+          renderItem={this._renderItem.bind(this)}
         />
       </View>
     );
