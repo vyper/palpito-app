@@ -2,8 +2,9 @@ import React from 'react';
 import { Platform, StatusBar } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
-import Bets from './screens/Bets';
 import SignIn from './screens/SignIn';
+import Bets from './screens/Bets';
+import Bet from './screens/Bet';
 
 const headerStyle = {
   marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
@@ -13,7 +14,7 @@ export const SignedOut = StackNavigator({
   SignIn: {
     screen: SignIn,
     navigationOptions: {
-      title: 'Sign In',
+      title: 'Palpito',
       headerStyle
     }
   }
@@ -23,10 +24,17 @@ export const SignedIn = StackNavigator({
   Bets: {
     screen: Bets,
     navigationOptions: {
-      title: 'Bets',
+      title: 'Seus palpites',
       headerStyle
     }
-  }
+  },
+  Bet: {
+    screen: Bet,
+    navigationOptions: {
+      title: 'Palpite',
+      headerStyle
+    }
+  },
 });
 
 export const createRootNavigator = (signedIn = false) => {
