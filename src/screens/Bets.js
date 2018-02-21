@@ -7,7 +7,7 @@ export default class Bets extends Component {
   state = {
     accessToken: '',
     bets: [],
-    loading: true,
+    refreshing: true,
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -23,17 +23,21 @@ export default class Bets extends Component {
     };
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.refreshBets();
+  }
+
+  async refreshBets() {
     let accessToken = await currentSignedUser();
-    this.setState({ accessToken });
+    this.setState({ accessToken, refreshing: true });
     let bets = await this.requestBets();
     console.log(bets);
-    this.setState({ bets, loading: false });
+    this.setState({ bets, refreshing: false });
   }
 
   requestBets() {
-    return fetch('http://palpito.com.br/bets.json?group_id=13', {
-      headers: { Authorization: 'Bearer ' + this.state.accessToken }
+    return fetch('http://palpito.com.br/bets.json', {
+      headers: { Authorization: `Bearer ${this.state.accessToken}` }
     }).then((response) => response.json())
     .catch((error) => {
       console.error('error: ', error);
@@ -61,14 +65,12 @@ export default class Bets extends Component {
   render() {
     return (
       <View>
-        { this.state.loading &&
-          <ActivityIndicator size="large" />
-        }
-
         <FlatList
           data={this.state.bets}
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem.bind(this)}
+          refreshing={this.state.refreshing}
+          onRefresh={() => { this.refreshBets() }}
         />
       </View>
     );
