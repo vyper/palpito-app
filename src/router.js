@@ -1,0 +1,54 @@
+import React from 'react';
+import { Platform, StatusBar } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+
+import Bets from './screens/Bets';
+import SignIn from './screens/SignIn';
+
+const headerStyle = {
+  marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
+};
+
+export const SignedOut = StackNavigator({
+  SignIn: {
+    screen: SignIn,
+    navigationOptions: {
+      title: 'Sign In',
+      headerStyle
+    }
+  }
+});
+
+export const SignedIn = StackNavigator({
+  Bets: {
+    screen: Bets,
+    navigationOptions: {
+      title: 'Bets',
+      headerStyle
+    }
+  }
+});
+
+export const createRootNavigator = (signedIn = false) => {
+  return StackNavigator(
+    {
+      SignedIn: {
+        screen: SignedIn,
+        navigationOptions: {
+          gesturesEnabled: false
+        }
+      },
+      SignedOut: {
+        screen: SignedOut,
+        navigationOptions: {
+          gesturesEnabled: false
+        }
+      }
+    },
+    {
+      headerMode: 'none',
+      mode: 'modal',
+      initialRouteName: signedIn ? 'SignedIn' : 'SignedOut'
+    }
+  );
+};
