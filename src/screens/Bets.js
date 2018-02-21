@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { Alert, Button, FlatList, Text, TouchableHighlight, View } from 'react-native';
+import { ActivityIndicator, Alert, Button, FlatList, Text, TouchableHighlight, View } from 'react-native';
 
-import { currentSignedUser } from '../auth';
-import { onSignOut } from '../auth';
+import { currentSignedUser, onSignOut } from '../auth';
 
 export default class Bets extends Component {
   state = {
     accessToken: '',
     bets: [],
+    loading: true,
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -25,12 +25,12 @@ export default class Bets extends Component {
     };
   };
 
-  async componentWillMount() {
+  async componentDidMount() {
     let accessToken = await currentSignedUser();
     this.setState({ accessToken });
     let bets = await this.requestBets();
     console.log(bets);
-    this.setState({ bets });
+    this.setState({ bets, loading: false });
   }
 
   requestBets() {
@@ -59,6 +59,10 @@ export default class Bets extends Component {
   render() {
     return (
       <View>
+        { this.state.loading &&
+          <ActivityIndicator size="large" />
+        }
+
         <FlatList
           data={this.state.bets}
           keyExtractor={this._keyExtractor}
