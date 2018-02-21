@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Button, View, Text, TextInput } from 'react-native';
+import { Alert, Button, Image, View, Text, TextInput } from 'react-native';
 
 import { currentSignedUser } from '../auth';
 
@@ -42,6 +42,10 @@ export default class Bet extends Component {
 
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flex: 1, alignItems: 'center' }}>
+            <Image
+              source={{ uri: `http:${bet.team_home_image_url}` }}
+              style={{ width: 50, height: 50 }}
+            />
             <Text>{bet.team_home}</Text>
             <TextInput
               placeholder="gols do mandante"
@@ -52,6 +56,10 @@ export default class Bet extends Component {
           </View>
 
           <View style={{ flex: 1, alignItems: 'center' }}>
+            <Image
+                source={{ uri: `http:${bet.team_away_image_url}` }}
+                style={{ width: 50, height: 50 }}
+              />
             <Text>{bet.team_away}</Text>
             <TextInput
               placeholder="gols do visitante"
