@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Alert, Button, Image, View, Text, TextInput } from 'react-native';
 
 import { Container } from '../components';
-import { currentSignedUser } from '../auth';
+import { currentSignedUser } from '../actions/auth';
 
 export default class Bet extends Component {
   state = {

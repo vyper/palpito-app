@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Text, TextInput, View } from 'react-native';
 
 import { Container } from '../components';
-import { onSignIn } from '../auth';
+import { onSignIn } from '../actions/auth';
 
 export default class SignIn extends Component {
   state = {

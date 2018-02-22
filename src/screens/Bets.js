@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ActivityIndicator, Alert, Button, Image, FlatList, Text, TouchableHighlight, View } from 'react-native';
 
 import { Container } from '../components';
-import { currentSignedUser, onSignOut } from '../auth';
+import { currentSignedUser, onSignOut } from '../actions/auth';
 
 export default class Bets extends Component {
   state = {

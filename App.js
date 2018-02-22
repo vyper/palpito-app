@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Alert } from 'react-native';
 
 import { createRootNavigator } from './src/config/router';
-import { currentSignedUser } from './src/auth';
+import { currentSignedUser } from './src/actions/auth';
 
 export default class App extends Component {
   state = {
