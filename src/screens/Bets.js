@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, Alert, Button, Image, FlatList, Text, TouchableHighlight, View } from 'react-native';
 
+import { Container } from '../components';
 import { currentSignedUser, onSignOut } from '../auth';
 
 export default class Bets extends Component {
@@ -36,7 +37,7 @@ export default class Bets extends Component {
   }
 
   requestBets() {
-    return fetch('http://palpito.com.br/bets.json', {
+    return fetch('http://palpito.com.br/bets.json?group_id=13', {
       headers: { Authorization: `Bearer ${this.state.accessToken}` }
     }).then((response) => response.json())
     .catch((error) => {
@@ -72,7 +73,7 @@ export default class Bets extends Component {
 
   render() {
     return (
-      <View>
+      <Container>
         <FlatList
           data={this.state.bets}
           keyExtractor={this._keyExtractor}
@@ -80,7 +81,7 @@ export default class Bets extends Component {
           refreshing={this.state.refreshing}
           onRefresh={() => { this.refreshBets() }}
         />
-      </View>
+      </Container>
     );
   }
 }

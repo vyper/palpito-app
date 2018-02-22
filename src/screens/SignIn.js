@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Text, TextInput, View } from 'react-native';
 
+import { Container } from '../components';
 import { onSignIn } from '../auth';
 
 export default class SignIn extends Component {
@@ -13,7 +14,7 @@ export default class SignIn extends Component {
     const { navigate } = this.props.navigation;
 
     return (
-      <View>
+      <Container>
         <TextInput
           placeholder="E-mail"
           autoCorrect={false}
@@ -36,7 +37,7 @@ export default class SignIn extends Component {
             onSignIn(this.state.email, this.state.password).then(accessToken => navigate('SignedIn'));
           }}
         />
-      </View>
+      </Container>
     );
   }
 }

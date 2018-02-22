@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, Button, Image, View, Text, TextInput } from 'react-native';
 
+import { Container } from '../components';
 import { currentSignedUser } from '../auth';
 
 export default class Bet extends Component {
@@ -36,7 +37,7 @@ export default class Bet extends Component {
   render() {
     const bet = this.props.navigation.state.params.bet;
     return (
-      <View style={{ flex: 1 }}>
+      <Container>
         <Text>Bet</Text>
         <Text>{bet.id}</Text>
 
@@ -74,7 +75,7 @@ export default class Bet extends Component {
           title="Salvar palpite"
           onPress={() => this.saveBet()}
         />
-      </View>
+      </Container>
     );
   }
 }
