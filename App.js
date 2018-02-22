@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Alert } from 'react-native';
 
-import { createRootNavigator } from './src/router';
+import { createRootNavigator } from './src/config/router';
 import { currentSignedUser } from './src/auth';
 
 export default class App extends Component {
