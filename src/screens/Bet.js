@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Alert, Button, View, Text, TextInput } from 'react-native';
+import { Alert, Button, Image, View, Text, TextInput } from 'react-native';
 
-import { currentSignedUser } from '../auth';
+import { Container } from '../components';
+import { currentSignedUser } from '../actions/auth';
 
 export default class Bet extends Component {
   state = {
@@ -36,12 +37,16 @@ export default class Bet extends Component {
   render() {
     const bet = this.props.navigation.state.params.bet;
     return (
-      <View style={{ flex: 1 }}>
+      <Container>
         <Text>Bet</Text>
         <Text>{bet.id}</Text>
 
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flex: 1, alignItems: 'center' }}>
+            <Image
+              source={{ uri: `http:${bet.team_home_image_url}` }}
+              style={{ width: 50, height: 50 }}
+            />
             <Text>{bet.team_home}</Text>
             <TextInput
               placeholder="gols do mandante"
@@ -52,6 +57,10 @@ export default class Bet extends Component {
           </View>
 
           <View style={{ flex: 1, alignItems: 'center' }}>
+            <Image
+                source={{ uri: `http:${bet.team_away_image_url}` }}
+                style={{ width: 50, height: 50 }}
+              />
             <Text>{bet.team_away}</Text>
             <TextInput
               placeholder="gols do visitante"
@@ -66,7 +75,7 @@ export default class Bet extends Component {
           title="Salvar palpite"
           onPress={() => this.saveBet()}
         />
-      </View>
+      </Container>
     );
   }
 }

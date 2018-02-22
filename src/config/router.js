@@ -2,9 +2,7 @@ import React from 'react';
 import { Platform, StatusBar } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
-import SignIn from './screens/SignIn';
-import Bets from './screens/Bets';
-import Bet from './screens/Bet';
+import { Bet, Bets, SignIn } from '../screens';
 
 const headerStyle = {
   marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
