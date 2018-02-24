@@ -13,6 +13,12 @@ export default class Bets extends Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
+      headerLeft: (
+        <Button
+          title="..."
+          onPress={() => navigation.navigate('DrawerToggle')}
+        />
+      ),
       headerRight: (
         <Button
           title="Sair"

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Platform, StatusBar } from 'react-native';
-import { StackNavigator } from 'react-navigation';
+import { DrawerNavigator, StackNavigator } from 'react-navigation';
 
+import { DrawerMenu } from '../components';
 import { Bet, Bets, SignIn } from '../screens';
 
 const headerStyle = {
@@ -18,7 +19,7 @@ export const SignedOut = StackNavigator({
   }
 });
 
-export const SignedIn = StackNavigator({
+export const MainStack = StackNavigator({
   Bets: {
     screen: Bets,
     navigationOptions: {
@@ -34,6 +35,15 @@ export const SignedIn = StackNavigator({
     }
   },
 });
+
+const SignedIn = DrawerNavigator(
+  {
+    Main: { screen: MainStack }
+  },
+  {
+    contentComponent: DrawerMenu,
+  }
+);
 
 export const createRootNavigator = (signedIn = false) => {
   return StackNavigator(
