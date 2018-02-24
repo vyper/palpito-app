@@ -1,3 +1,4 @@
 import { Container } from './Container';
+import { DrawerMenu } from './DrawerMenu';
 
-export { Container };
+export { DrawerMenu, Container };
