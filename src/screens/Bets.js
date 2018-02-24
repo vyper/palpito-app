@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ActivityIndicator, Alert, Button, Image, FlatList, Text, TouchableHighlight, View } from 'react-native';
 
 import { Container } from '../components';
-import { currentSignedUser, onSignOut } from '../actions/auth';
+import { currentSignedUser } from '../actions/auth';
 
 export default class Bets extends Component {
   state = {
@@ -17,14 +17,6 @@ export default class Bets extends Component {
         <Button
           title="..."
           onPress={() => navigation.navigate('DrawerToggle')}
-        />
-      ),
-      headerRight: (
-        <Button
-          title="Sair"
-          onPress={() => {
-            onSignOut().then(() => navigation.navigate('SignedOut'));
-          }}
         />
       ),
     };
