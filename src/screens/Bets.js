@@ -3,6 +3,7 @@ import { ActivityIndicator, Alert, Button, Image, FlatList, Text, TouchableHighl
 
 import { Container } from '../components';
 import { currentSignedUser } from '../actions/auth';
+import { getActiveGroup } from '../actions/groups';
 
 export default class Bets extends Component {
   state = {
@@ -27,15 +28,19 @@ export default class Bets extends Component {
   }
 
   async refreshBets() {
+    let activeGroupId = await getActiveGroup();
     let accessToken = await currentSignedUser();
+
     this.setState({ accessToken, refreshing: true });
-    let bets = await this.requestBets();
-    console.log(bets);
+    let bets = await this.requestBets(activeGroupId);
     this.setState({ bets, refreshing: false });
   }
 
-  requestBets() {
-    return fetch('http://palpito.com.br/bets.json?group_id=13', {
+  requestBets(groupId = null) {
+    let url = 'http://palpito.com.br/bets.json';
+    let filter = groupId === null ? '' : `group_id=${groupId}`;
+
+    return fetch(`${url}?${filter}`, {
       headers: { Authorization: `Bearer ${this.state.accessToken}` }
     }).then((response) => response.json())
     .catch((error) => {

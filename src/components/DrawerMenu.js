@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Button, FlatList, ScrollView, Text, View } from 'react-native';
+import { Alert, Button, FlatList, ScrollView, Text, TouchableHighlight, View } from 'react-native';
 
-import { fetchGroups } from '../actions/groups';
+import { setActiveGroup, fetchGroups } from '../actions/groups';
 import { onSignOut } from '../actions/auth';
 
 export class DrawerMenu extends Component {
@@ -16,19 +16,27 @@ export class DrawerMenu extends Component {
   _keyExtractor = (item, index) => item.id.toString();
 
   _renderItem({ item }) {
+    const { navigate } = this.props.navigation;
+
     return (
-      <View>
-        <Text>{item.championship.name}</Text>
-        <Text style={{ fontSize: 12, color: 'gray' }}>{item.name}</Text>
-      </View>
+      <TouchableHighlight
+        onPress={ () => {
+          setActiveGroup(item.id).then(res => navigate('Bets'))
+        }}
+      >
+        <View style={{ margin: 10 }}>
+          <Text style={{ fontSize: 15 }}>{item.championship.name}</Text>
+          <Text style={{ fontSize: 12, color: 'gray' }}>{item.name}</Text>
+        </View>
+      </TouchableHighlight>
     );
   }
 
   render() {
-    return (
-      <ScrollView>
-        <Text style={{ color: '#fff', backgroundColor: '#333' }}>Palpito</Text>
+    const { navigate } = this.props.navigation;
 
+    return (
+      <ScrollView style={{ paddingTop: 20 }}>
         <FlatList
           data={this.state.groups}
           keyExtractor={this._keyExtractor}
@@ -38,7 +46,7 @@ export class DrawerMenu extends Component {
         <Button
           title="Sair"
           onPress={() => {
-            onSignOut().then(() => navigation.navigate('SignedOut'));
+            onSignOut().then(() => navigate('SignedOut'));
           }}
         />
       </ScrollView>
