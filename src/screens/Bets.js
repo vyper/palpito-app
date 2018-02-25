@@ -38,7 +38,7 @@ export default class Bets extends Component {
 
   requestBets(groupId = null) {
     let url = 'http://palpito.com.br/bets.json';
-    let filter = groupId === null ? '' : `group_id=${groupId}`;
+    let filter = isNaN(parseInt(groupId)) ? '' : `group_id=${groupId}`;
 
     return fetch(`${url}?${filter}`, {
       headers: { Authorization: `Bearer ${this.state.accessToken}` }
