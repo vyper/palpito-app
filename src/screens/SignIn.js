@@ -22,6 +22,7 @@ export default class SignIn extends Component {
           autoCapitalize={'none'}
           value={this.state.email}
           onChangeText={email => this.setState({ email })}
+          style={{ marginTop: 15, marginBottom: 15 }}
         />
 
         <TextInput
@@ -29,6 +30,7 @@ export default class SignIn extends Component {
           secureTextEntry
           value={this.state.password}
           onChangeText={password => this.setState({ password })}
+          style={{ marginBottom: 15 }}
         />
 
         <Button
