@@ -5,7 +5,7 @@ import { currentSignedUser } from './auth';
 export const GROUP_ACTIVE_ID = '@Palpito:Group:ActiveId';
 
 export const fetchGroups = async () => {
-  let accessToken = await currentSignedUser;
+  let accessToken = await currentSignedUser();
 
   return fetch('http://palpito.com.br/grupos.json', {
     headers: { Authorization: `Bearer ${accessToken}` }
