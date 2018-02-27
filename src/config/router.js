@@ -5,42 +5,24 @@ import { DrawerNavigator, StackNavigator } from 'react-navigation';
 import { DrawerMenu } from '../components';
 import { Bet, Bets, SignIn } from '../screens';
 
-const headerStyle = {
-  marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
-};
-
-export const SignedOut = StackNavigator({
-  SignIn: {
-    screen: SignIn,
-    navigationOptions: {
-      title: 'Palpito',
-      headerStyle
+export const SignedOut = StackNavigator(
+  {
+    SignIn: {
+      screen: SignIn
     }
+  },
+  {
+    headerMode: 'none',
   }
-});
+);
 
-export const MainStack = StackNavigator({
-  Bets: {
-    screen: Bets,
-    navigationOptions: {
-      title: 'Seus palpites',
-      headerStyle
-    }
-  },
-  Bet: {
-    screen: Bet,
-    navigationOptions: {
-      title: 'Palpite',
-      headerStyle
-    }
-  },
-});
-
-const SignedIn = DrawerNavigator(
+export const SignedIn = DrawerNavigator(
   {
-    Main: { screen: MainStack }
+    Bets: { screen: Bets },
+    Bet:  { screen: Bet },
   },
   {
+    headerMode: 'none',
     contentComponent: DrawerMenu,
   }
 );
@@ -48,18 +30,8 @@ const SignedIn = DrawerNavigator(
 export const createRootNavigator = (signedIn = false) => {
   return StackNavigator(
     {
-      SignedIn: {
-        screen: SignedIn,
-        navigationOptions: {
-          gesturesEnabled: false
-        }
-      },
-      SignedOut: {
-        screen: SignedOut,
-        navigationOptions: {
-          gesturesEnabled: false
-        }
-      }
+      SignedIn:  { screen: SignedIn },
+      SignedOut: { screen: SignedOut }
     },
     {
       headerMode: 'none',

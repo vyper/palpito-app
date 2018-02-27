@@ -1,44 +1,58 @@
 import React, { Component } from 'react';
-import { Button, Text, TextInput, View } from 'react-native';
+import { Button, Container, Content, Form, Input, Item, Header, Text } from 'native-base';
 
-import { Container } from '../components';
 import { onSignIn } from '../actions/auth';
 
 export default class SignIn extends Component {
   state = {
-    email: '',
+    email:    '',
     password: '',
+    loading:  false,
+  }
+
+  _onPress() {
+    this.setState({ loading: true });
+
+    onSignIn(this.state.email, this.state.password)
+      .then(accessToken => this.props.navigation.navigate('SignedIn'));
+
+    this.setState({ loading: false });
   }
 
   render() {
-    const { navigate } = this.props.navigation;
-
     return (
       <Container>
-        <TextInput
-          placeholder="E-mail"
-          autoCorrect={false}
-          autoFocus={true}
-          autoCapitalize={'none'}
-          value={this.state.email}
-          onChangeText={email => this.setState({ email })}
-          style={{ marginTop: 15, marginBottom: 15 }}
-        />
+        <Header />
 
-        <TextInput
-          placeholder="Senha"
-          secureTextEntry
-          value={this.state.password}
-          onChangeText={password => this.setState({ password })}
-          style={{ marginBottom: 15 }}
-        />
+        <Content padder>
+          <Form>
+            <Item>
+              <Input
+                placeholder="E-mail"
+                autoCorrect={false}
+                autoFocus={true}
+                autoCapitalize={'none'}
+                value={this.state.email}
+                onChangeText={email => this.setState({ email })}
+              />
+            </Item>
 
-        <Button
-          title="Entrar!"
-          onPress={() => {
-            onSignIn(this.state.email, this.state.password).then(accessToken => navigate('SignedIn'));
-          }}
-        />
+            <Item>
+              <Input
+                placeholder="Senha"
+                secureTextEntry
+                value={this.state.password}
+                onChangeText={password => this.setState({ password })}
+              />
+            </Item>
+
+            <Button full onPress={() => this._onPress()}>
+              <Text>Entrar!</Text>
+              {this.state.loading &&
+                <Spinner />}
+            </Button>
+          </Form>
+        </Content>
       </Container>
     );
   }

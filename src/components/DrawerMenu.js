@@ -21,7 +21,7 @@ export class DrawerMenu extends Component {
     return (
       <TouchableHighlight
         onPress={ () => {
-          setActiveGroup(item.id).then(res => navigate('Bets'))
+          setActiveGroup(item.id).then(res => navigate('Bets', { groupId: item.id }))
         }}
       >
         <View style={{ margin: 10 }}>

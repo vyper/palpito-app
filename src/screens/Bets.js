@@ -1,7 +1,25 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, Alert, Button, Image, FlatList, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import {
+  Body,
+  Button,
+  Col,
+  Container,
+  Content,
+  Icon,
+  Form,
+  Grid,
+  Header,
+  Left,
+  List,
+  ListItem,
+  Picker,
+  Right,
+  Row,
+  Title,
+  Subtitle,
+} from 'native-base';
+import { Alert, Image, StyleSheet, Text, RefreshControl, View } from 'react-native';
 
-import { Container } from '../components';
 import { currentSignedUser } from '../actions/auth';
 import { getActiveGroup } from '../actions/groups';
 
@@ -10,33 +28,38 @@ export default class Bets extends Component {
     accessToken: '',
     bets: [],
     refreshing: true,
+    activeGroupId: '',
   }
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerLeft: (
-        <Button
-          title="..."
-          onPress={() => navigation.navigate('DrawerToggle')}
-        />
-      ),
-    };
-  };
+  componentWillReceiveProps(nextProps) {
+    let params = nextProps.navigation.state.params;
+    let activeGroupId = params.groupId;
+
+    this.setState({ activeGroupId });
+    this.refreshBets();
+  }
 
   componentDidMount() {
     this.refreshBets();
   }
 
   async refreshBets() {
-    let activeGroupId = await getActiveGroup();
+    this.setState({ bets: [] });
+
+    if (this.state.activeGroupId.length < 1) {
+      let activeGroupId = await getActiveGroup();
+      this.setState({ activeGroupId });
+    }
     let accessToken = await currentSignedUser();
 
     this.setState({ accessToken, refreshing: true });
-    let bets = await this.requestBets(activeGroupId);
+    let bets = await this.requestBets();
     this.setState({ bets, refreshing: false });
   }
 
-  requestBets(groupId = null) {
+  requestBets() {
+    let groupId = this.state.activeGroupId;
+
     let url = 'http://palpito.com.br/bets.json';
     let filter = isNaN(parseInt(groupId)) ? '' : `group_id=${groupId}`;
 
@@ -48,52 +71,89 @@ export default class Bets extends Component {
     });
   }
 
-  _keyExtractor = (item, index) => item.id.toString();
-
-  _renderItem({ item }) {
+  _renderRow(bet) {
     const { navigate } = this.props.navigation;
 
     return (
-      <TouchableHighlight onPress={() => { navigate('Bet', { bet: item }) }}>
-        <View style={{ marginBottom: 10, flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-          <View style={{ flex: 1, marginRight: 10 }}>
-            <Text style={{ alignSelf: 'stretch', textAlign: 'center', fontSize: 12, backgroundColor: '#dff0d8', fontWeight: 'bold' }}>{item.weekday}</Text>
-            <Text style={{ alignSelf: 'stretch', textAlign: 'center', fontSize: 11 }}>{item.date}</Text>
-            <Text style={{ alignSelf: 'stretch', textAlign: 'center', fontSize: 10, color: '#777777' }}>{item.time}</Text>
-          </View>
-          <Image
-            source={{ uri: `http:${item.team_home_image_url}` }}
-            style={{ flex: 1, width: 50, height: 50 }}
-          />
-          <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 2, textAlign: 'right' }}>{item.team_home_short}</Text>
-          <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 1, textAlign: 'right' }}>{item.team_home_goals}</Text>
-          <View style={{ flex: 1, marginRight: 5, marginLeft: 5 }}>
-            <Text style={{ fontSize: 10, textAlign: 'center', paddingTop: 15, paddingBottom: 5, color: '#999' }}>x</Text>
-            {!item.is_bettable &&
-              <Text style={[styles.playedScore, styles[item.label]]}>{item.game_team_home_goals} x {item.game_team_away_goals}</Text>
+      <ListItem onPress={() => { navigate('Bet', { bet }) }}>
+        <Grid>
+          <Col size={1}>
+            <Row style={{ justifyContent: 'center', backgroundColor: '#dff0d8' }}>
+              <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{bet.weekday}</Text>
+            </Row>
+            <Row style={{ justifyContent: 'center' }}>
+              <Text style={{ fontSize: 11 }}>{bet.date}</Text>
+            </Row>
+            <Row style={{ justifyContent: 'center' }}>
+              <Text style={{ fontSize: 10, color: '#777777' }}>{bet.time}</Text>
+            </Row>
+          </Col>
+
+          <Col size={2} style={{  alignItems: 'center', justifyContent: 'center' }}>
+            <Image
+              source={{ uri: `http:${bet.team_home_image_url}` }}
+              style={{ width: 50, height: 50 }}
+            />
+            <Text style={{ fontSize: 10 }}>{bet.team_home}</Text>
+          </Col>
+          <Col size={1} style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ textAlign: 'center', fontSize: 20 }}>{bet.team_home_goals}</Text>
+          </Col>
+          <Col size={2} style={{ alignItems: 'center', justifyContent: 'center' }}>
+            {!bet.is_bettable &&
+              <Text style={[styles.playedScore, styles[bet.label]]}>{bet.game_team_home_goals} x {bet.game_team_away_goals}</Text>
             }
-          </View>
-          <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 1, textAlign: 'left' }}>{item.team_away_goals}</Text>
-          <Text style={{ fontSize: 20, paddingTop: 15, paddingBottom: 15, flex: 2, textAlign: 'left' }}>{item.team_away_short}</Text>
-          <Image
-            source={{ uri: `http:${item.team_away_image_url}` }}
-            style={{ flex: 1, width: 50, height: 50 }}
-          />
-        </View>
-      </TouchableHighlight>
+            {!this.state.isBettable &&
+              <Text style={{ textAlign: 'center', fontSize: 20 }}>{bet.points}</Text>
+            }
+          </Col>
+          <Col size={1} style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ textAlign: 'center', fontSize: 20 }}>{bet.team_away_goals}</Text>
+          </Col>
+          <Col size={2} style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Image
+              source={{ uri: `http:${bet.team_away_image_url}` }}
+              style={{ width: 50, height: 50 }}
+            />
+            <Text style={{ fontSize: 10 }}>{bet.team_away}</Text>
+          </Col>
+        </Grid>
+      </ListItem>
     );
   }
 
   render() {
     return (
       <Container>
-        <FlatList
-          data={this.state.bets}
-          keyExtractor={this._keyExtractor}
-          renderItem={this._renderItem.bind(this)}
-          refreshing={this.state.refreshing}
-          onRefresh={() => { this.refreshBets() }}
-        />
+        <Header>
+          <Left>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("DrawerOpen")}
+            >
+              <Icon name='menu' />
+            </Button>
+          </Left>
+          <Body>
+            <Title>Palpites</Title>
+          </Body>
+          <Right />
+        </Header>
+
+        <Content
+          padder
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+              title="Carregando..."
+            />
+          }>
+          <List
+            dataArray={this.state.bets}
+            renderRow={this._renderRow.bind(this)}
+          />
+        </Content>
       </Container>
     );
   }
