@@ -36,6 +36,11 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# Fabric / Crashlytics
+fabric.properties
+crashlytics-build.properties
+com_crashlytics_export_strings.xml
+
 # BUCK
 buck-out/
 \.buckd/
