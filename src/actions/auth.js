@@ -1,4 +1,5 @@
-import { Alert, AsyncStorage } from 'react-native';
+import { AsyncStorage } from 'react-native';
+import { Toast } from 'native-base';
 
 export const USER_ACCESS_TOKEN = '@Palpito:User:AccessToken';
 
@@ -12,15 +13,30 @@ export const onSignIn = (email, password) => {
               AsyncStorage.setItem(USER_ACCESS_TOKEN, auth.access_token);
               resolve(auth.access_token);
             } else {
-              Alert.alert('Por favor, verifique o email e senha!');
+              Toast.show({
+                text: 'Por favor, é necessário preencher email e senha!',
+                buttonText: 'Ok',
+                type: 'danger',
+                duration: 5000,
+              });
             }
           })
         .catch(error => {
-          Alert.alert('Ocorreu algum erro totalmente inesperado. E agora?!? Tenta daqui a pouco.');
+          Toast.show({
+            text: 'Ocorreu algum erro totalmente inesperado. E agora?!? Tenta daqui a pouco.',
+            buttonText: 'Ok',
+            type: 'danger',
+            duration: 5000,
+          });
         });
       });
     } else {
-      Alert.alert('Por favor, preencha o email e a senha corretamente');
+      Toast.show({
+        text: 'Por favor, preencha o email e a senha corretamente.',
+        buttonText: 'Ok',
+        type: 'danger',
+        duration: 5000,
+      });
     }
   });
 };

@@ -16,9 +16,10 @@ import {
   Row,
   Spinner,
   Text,
-  Title
+  Title,
+  Toast,
 } from 'native-base';
-import { Alert, Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 
 import { currentSignedUser } from '../actions/auth';
 
@@ -47,14 +48,25 @@ export default class Bet extends Component {
     const accessToken = await currentSignedUser();
     const headers = { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' };
 
-    await fetch(`http://palpito.com.br/bets/${bet.id}`, {
-      method: 'PUT',
-      body: JSON.stringify(body),
-      headers: headers,
-    });
-    this.setState({ loading: false });
+    try {
+      await fetch(`http://palpito.com.br/bets/${bet.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: headers,
+      });
+      this.setState({ loading: false });
 
-    Alert.alert('Palpite salvo com sucesso');
+      Toast.show({
+        text: 'Palpite salvo com sucesso!',
+        buttonText: 'Ok',
+      });
+    } catch (err) {
+      Toast.show({
+        text: 'Ocorreu algum erro inesperado, tente novamente, por favor!',
+        buttonText: 'Ok',
+        type: 'danger',
+      });
+    }
   }
 
   render() {

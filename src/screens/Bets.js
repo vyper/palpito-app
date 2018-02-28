@@ -18,7 +18,7 @@ import {
   Title,
   Subtitle,
 } from 'native-base';
-import { Alert, Image, StyleSheet, Text, RefreshControl, View } from 'react-native';
+import { Image, StyleSheet, Text, RefreshControl } from 'react-native';
 
 import { currentSignedUser } from '../actions/auth';
 import { getActiveGroup } from '../actions/groups';

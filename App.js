@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert } from 'react-native';
+import { Root, Toast } from 'native-base';
 
 import { createRootNavigator } from './src/config/router';
 import { currentSignedUser } from './src/actions/auth';
@@ -13,7 +13,13 @@ export default class App extends Component {
   componentWillMount() {
     currentSignedUser()
       .then(res => this.setState({ signedIn: res, checkedSignIn: true }))
-      .catch(err => Alert.alert('Ocorreu algum erro inesperado'));
+      .catch(err => {
+        Toast.show({
+          text: 'Ocorreu algum erro totalmente inesperado!',
+          buttonText: 'Ok',
+          type: 'danger',
+        });
+      });
   }
 
   render() {
@@ -24,6 +30,10 @@ export default class App extends Component {
     }
 
     const Layout = createRootNavigator(signedIn);
-    return <Layout />;
+    return (
+      <Root>
+        <Layout />
+      </Root>
+    );
   }
 }
