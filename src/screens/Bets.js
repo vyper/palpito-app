@@ -44,15 +44,23 @@ export default class Bets extends Component {
   }
 
   async refreshBets() {
-    this.setState({ bets: [] });
+    this.setState({ refreshing: true });
 
     if (this.state.activeGroupId.length < 1) {
       let activeGroupId = await getActiveGroup();
-      this.setState({ activeGroupId });
+
+      if (!activeGroupId) {
+        this.props.navigation.navigate("DrawerOpen");
+        this.setState({ refreshing: false });
+        return false;
+      } else {
+        this.setState({ activeGroupId });
+      }
     }
+
     let accessToken = await currentSignedUser();
 
-    this.setState({ accessToken, refreshing: true });
+    this.setState({ accessToken });
     let bets = await this.requestBets();
     this.setState({ bets, refreshing: false });
   }
@@ -145,7 +153,7 @@ export default class Bets extends Component {
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
+              onRefresh={() => this.refreshBets()}
               title="Carregando..."
             />
           }>

@@ -1,55 +1,68 @@
 import React, { Component } from 'react';
-import { Alert, Button, FlatList, ScrollView, Text, TouchableHighlight, View } from 'react-native';
+import { Alert, RefreshControl, View } from 'react-native';
+import { Button, Container, Content, List, ListItem, Text } from 'native-base';
 
 import { setActiveGroup, fetchGroups } from '../actions/groups';
 import { onSignOut } from '../actions/auth';
 
 export class DrawerMenu extends Component {
   state = {
-    groups: []
+    groups: [],
+    refreshing: false,
   }
 
-  componentDidMount() {
-    fetchGroups().then(groups => this.setState({ groups }));
+  componentWillMount() {
+    this.refreshGroups();
   }
 
-  _keyExtractor = (item, index) => item.id.toString();
+  async refreshGroups() {
+    this.setState({ refreshing: true });
+    let groups = await fetchGroups();
+    this.setState({ groups, refreshing: false });
+  }
 
-  _renderItem({ item }) {
+  _renderRow(group) {
     const { navigate } = this.props.navigation;
 
     return (
-      <TouchableHighlight
+      <ListItem
         onPress={ () => {
-          setActiveGroup(item.id).then(res => navigate('Bets', { groupId: item.id }))
+          setActiveGroup(group.id).then(res => navigate('Bets', { groupId: group.id }))
         }}
       >
-        <View style={{ margin: 10 }}>
-          <Text style={{ fontSize: 15 }}>{item.championship.name}</Text>
-          <Text style={{ fontSize: 12, color: 'gray' }}>{item.name}</Text>
-        </View>
-      </TouchableHighlight>
+        <Text style={{ fontSize: 15 }}>{group.championship.name}</Text>
+        <Text style={{ fontSize: 10, color: 'gray' }}>{group.name}</Text>
+      </ListItem>
     );
   }
 
   render() {
-    const { navigate } = this.props.navigation;
-
     return (
-      <ScrollView style={{ paddingTop: 20 }}>
-        <FlatList
-          data={this.state.groups}
-          keyExtractor={this._keyExtractor}
-          renderItem={this._renderItem.bind(this)}
-        />
+      <Container style={{ paddingTop: 20 }}>
+        <Content
+          padder
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={() => this.refreshGroups()}
+              title="Carregando..."
+            />
+          }>
+          <List
+            dataArray={this.state.groups}
+            renderRow={this._renderRow.bind(this)}
+          />
 
-        <Button
-          title="Sair"
-          onPress={() => {
-            onSignOut().then(() => navigate('SignedOut'));
-          }}
-        />
-      </ScrollView>
+          <Button
+            full
+            onPress={() => {
+              onSignOut().then(() => this.props.navigation.navigate('SignedOut'));
+            }}
+          >
+            <Text>Sair</Text>
+          </Button>
+        </Content>
+      </Container>
     );
   }
 }
