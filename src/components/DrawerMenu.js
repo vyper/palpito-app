@@ -26,6 +26,7 @@ export class DrawerMenu extends Component {
 
     return (
       <ListItem
+        button
         onPress={ () => {
           setActiveGroup(group.id).then(res => navigate('Bets', { groupId: group.id }))
         }}

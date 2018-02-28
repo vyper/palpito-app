@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {
   Body,
   Button,
+  Card,
+  CardItem,
   Col,
   Container,
   Content,
@@ -15,10 +17,11 @@ import {
   Picker,
   Right,
   Row,
+  Text,
   Title,
   Subtitle,
 } from 'native-base';
-import { Image, StyleSheet, Text, RefreshControl } from 'react-native';
+import { Image, StyleSheet, RefreshControl } from 'react-native';
 
 import { currentSignedUser } from '../actions/auth';
 import { getActiveGroup } from '../actions/groups';
@@ -83,50 +86,52 @@ export default class Bets extends Component {
     const { navigate } = this.props.navigation;
 
     return (
-      <ListItem onPress={() => { navigate('Bet', { bet }) }}>
-        <Grid>
-          <Col size={1}>
-            <Row style={{ justifyContent: 'center', backgroundColor: '#dff0d8' }}>
-              <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{bet.weekday}</Text>
-            </Row>
-            <Row style={{ justifyContent: 'center' }}>
-              <Text style={{ fontSize: 11 }}>{bet.date}</Text>
-            </Row>
-            <Row style={{ justifyContent: 'center' }}>
-              <Text style={{ fontSize: 10, color: '#777777' }}>{bet.time}</Text>
-            </Row>
-          </Col>
+        <Card>
+          <CardItem button onPress={() => { navigate('Bet', { bet }) }}>
+            <Grid>
+              <Col size={1}>
+                <Row style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: '#dff0d8' }}>
+                  <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{bet.weekday}</Text>
+                </Row>
+                <Row style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 11 }}>{bet.date}</Text>
+                </Row>
+                <Row style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 10, color: '#777777' }}>{bet.time}</Text>
+                </Row>
+              </Col>
 
-          <Col size={2} style={{  alignItems: 'center', justifyContent: 'center' }}>
-            <Image
-              source={{ uri: `http:${bet.team_home_image_url}` }}
-              style={{ width: 50, height: 50 }}
-            />
-            <Text style={{ fontSize: 10 }}>{bet.team_home}</Text>
-          </Col>
-          <Col size={1} style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ textAlign: 'center', fontSize: 20 }}>{bet.team_home_goals}</Text>
-          </Col>
-          <Col size={2} style={{ alignItems: 'center', justifyContent: 'center' }}>
-            {!bet.is_bettable &&
-              <Text style={[styles.playedScore, styles[bet.label]]}>{bet.game_team_home_goals} x {bet.game_team_away_goals}</Text>
-            }
-            {!this.state.isBettable &&
-              <Text style={{ textAlign: 'center', fontSize: 20 }}>{bet.points}</Text>
-            }
-          </Col>
-          <Col size={1} style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ textAlign: 'center', fontSize: 20 }}>{bet.team_away_goals}</Text>
-          </Col>
-          <Col size={2} style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <Image
-              source={{ uri: `http:${bet.team_away_image_url}` }}
-              style={{ width: 50, height: 50 }}
-            />
-            <Text style={{ fontSize: 10 }}>{bet.team_away}</Text>
-          </Col>
-        </Grid>
-      </ListItem>
+              <Col size={2} style={{  alignItems: 'center', justifyContent: 'center' }}>
+                <Image
+                  source={{ uri: `http:${bet.team_home_image_url}` }}
+                  style={{ width: 50, height: 50 }}
+                />
+                <Text style={{ fontSize: 10 }}>{bet.team_home}</Text>
+              </Col>
+              <Col size={1} style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ textAlign: 'center', fontSize: 20 }}>{bet.team_home_goals}</Text>
+              </Col>
+              <Col size={2} style={{ alignItems: 'center', justifyContent: 'center' }}>
+                {!bet.is_bettable &&
+                  <Text style={[styles.playedScore, styles[bet.label]]}>{bet.game_team_home_goals} x {bet.game_team_away_goals}</Text>
+                }
+                {!this.state.isBettable &&
+                  <Text style={{ textAlign: 'center', fontSize: 20 }}>{bet.points}</Text>
+                }
+              </Col>
+              <Col size={1} style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ textAlign: 'center', fontSize: 20 }}>{bet.team_away_goals}</Text>
+              </Col>
+              <Col size={2} style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Image
+                  source={{ uri: `http:${bet.team_away_image_url}` }}
+                  style={{ width: 50, height: 50 }}
+                />
+                <Text style={{ fontSize: 10 }}>{bet.team_away}</Text>
+              </Col>
+            </Grid>
+          </CardItem>
+        </Card>
     );
   }
 
