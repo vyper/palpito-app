@@ -1,7 +1,26 @@
 import React, { Component } from 'react';
-import { Alert, Button, Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  Body,
+  Button,
+  Col,
+  Container,
+  Content,
+  Icon,
+  Input,
+  Item,
+  Form,
+  Header,
+  Grid,
+  Left,
+  Right,
+  Row,
+  Spinner,
+  Text,
+  Title,
+  Toast,
+} from 'native-base';
+import { Image, StyleSheet } from 'react-native';
 
-import { Container } from '../components';
 import { currentSignedUser } from '../actions/auth';
 
 export default class Bet extends Component {
@@ -9,6 +28,7 @@ export default class Bet extends Component {
     teamHomeGoals: '',
     teamAwayGoals: '',
     isBettable: false,
+    loading:    false,
   }
 
   componentWillMount() {
@@ -22,79 +42,119 @@ export default class Bet extends Component {
   }
 
   async saveBet() {
+    this.setState({ loading: true });
     const bet = this.props.navigation.state.params.bet;
     const body = { ...bet, team_home_goals: this.state.teamHomeGoals, team_away_goals: this.state.teamAwayGoals };
     const accessToken = await currentSignedUser();
     const headers = { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' };
 
-    await fetch(`http://palpito.com.br/bets/${bet.id}`, {
-      method: 'PUT',
-      body: JSON.stringify(body),
-      headers: headers,
-    });
+    try {
+      await fetch(`http://palpito.com.br/bets/${bet.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: headers,
+      });
+      this.setState({ loading: false });
 
-    Alert.alert('Palpite salvo com sucesso');
+      Toast.show({
+        text: 'Palpite salvo com sucesso!',
+        buttonText: 'Ok',
+      });
+    } catch (err) {
+      Toast.show({
+        text: 'Ocorreu algum erro inesperado, tente novamente, por favor!',
+        buttonText: 'Ok',
+        type: 'danger',
+      });
+    }
   }
 
   render() {
     const bet = this.props.navigation.state.params.bet;
     return (
       <Container>
-        <View style={{ alignItems: 'center' }}>
-          <Text>{`${bet.weekday}, ${bet.date} ${bet.time}`}</Text>
-        </View>
+        <Header>
+          <Left>
+            <Button transparent onPress={() => this.props.navigation.goBack()}>
+              <Icon name="arrow-back" />
+            </Button>
+          </Left>
 
-        <View style={{ flexDirection: 'row' }}>
-          <View style={{ flex: 5, alignItems: 'center' }}>
-            <Image
-              source={{ uri: `http:${bet.team_home_image_url}` }}
-              style={{ width: 50, height: 50, marginBottom: 10 }}
-            />
-            <Text style={{ marginBottom: 10 }}>{bet.team_home}</Text>
-            <TextInput
-              style={{ fontSize: 18, textAlign: 'center', marginBottom: 10 }}
-              placeholder="gols do mandante"
-              keyboardType={'numeric'}
-              value={this.state.teamHomeGoals}
-              editable={this.state.isBettable}
-              onChangeText={teamHomeGoals => this.setState({ teamHomeGoals })}
-            />
-          </View>
+          <Body>
+            <Title>Palpite</Title>
+          </Body>
 
-          <View style={{ flex: 2, alignItems: 'center', justifyContent: 'center' }}>
-            {!this.state.isBettable &&
-              <Text style={{ textAlign: 'center', fontSize: 30 }}>{bet.points}</Text>
-            }
+          <Right />
+        </Header>
 
-            <Text style={{ color: '#999' }}>x</Text>
+        <Content padder>
+          <Form>
+            <Grid>
+              <Row style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text>{`${bet.weekday}, ${bet.date} ${bet.time}`}</Text>
+              </Row>
 
-            {!this.state.isBettable &&
-              <Text style={[styles.playedScore, styles[bet.label]]}>{bet.game_team_home_goals} x {bet.game_team_away_goals}</Text>
-            }
-          </View>
+              <Row>
+                <Col style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <Image
+                    source={{ uri: `http:${bet.team_home_image_url}` }}
+                    style={{ width: 50, height: 50 }}
+                  />
 
-          <View style={{ flex: 5, alignItems: 'center' }}>
-            <Image
-              source={{ uri: `http:${bet.team_away_image_url}` }}
-              style={{ width: 50, height: 50, marginBottom: 10 }}
-            />
-            <Text style={{ marginBottom: 10 }}>{bet.team_away}</Text>
-            <TextInput
-              style={{ fontSize: 18, textAlign: 'center', marginBottom: 10 }}
-              placeholder="gols do visitante"
-              keyboardType={'numeric'}
-              value={this.state.teamAwayGoals}
-              editable={this.state.isBettable}
-              onChangeText={teamAwayGoals => this.setState({ teamAwayGoals })}
-            />
-          </View>
-        </View>
+                  <Text>{bet.team_home}</Text>
 
-        <Button
-          title="Salvar palpite"
-          disabled={!this.state.isBettable}
-          onPress={() => this.saveBet()}
-        />
+                  <Item>
+                    <Input
+                      placeholder="gols do mandante"
+                      keyboardType={'numeric'}
+                      style={{ textAlign: 'center' }}
+                      value={this.state.teamHomeGoals}
+                      editable={this.state.isBettable}
+                      onChangeText={teamHomeGoals => this.setState({ teamHomeGoals })}
+                    />
+                  </Item>
+                </Col>
+                <Col style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  {!this.state.isBettable &&
+                    <Text style={[styles.playedScore, styles[bet.label]]}>{bet.game_team_home_goals} x {bet.game_team_away_goals}</Text>
+                  }
+                  {!this.state.isBettable &&
+                    <Text style={{ textAlign: 'center', fontSize: 30 }}>{bet.points}</Text>
+                  }
+                </Col>
+                <Col style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <Image
+                    source={{ uri: `http:${bet.team_away_image_url}` }}
+                    style={{ width: 50, height: 50 }}
+                  />
+
+                  <Text>{bet.team_away}</Text>
+
+                  <Item>
+                    <Input
+                      placeholder="gols do visitante"
+                      keyboardType={'numeric'}
+                      style={{ textAlign: 'center' }}
+                      value={this.state.teamAwayGoals}
+                      editable={this.state.isBettable}
+                      onChangeText={teamAwayGoals => this.setState({ teamAwayGoals })}
+                    />
+                  </Item>
+                </Col>
+              </Row>
+            </Grid>
+
+            <Button
+              full
+              disabled={!this.state.isBettable}
+              onPress={() => this.saveBet()}
+            >
+              {this.state.loading ?
+                <Spinner /> :
+                <Text>Salvar palpite</Text>}
+            </Button>
+          </Form>
+        </Content>
       </Container>
     );
   }
@@ -104,7 +164,8 @@ styles = StyleSheet.create({
   playedScore: {
     color: 'white',
     fontWeight: 'bold',
-    padding: 3,
+    padding: 2,
+    fontSize: 12,
     textAlign: 'center',
   },
   danger: {
