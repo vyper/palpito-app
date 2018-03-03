@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_name">Palpito</string>
     <string name="facebook_app_id">1427589860827129</string>
     <string name="fb_login_protocol_scheme">fb1427589860827129</string>
 </resources>
