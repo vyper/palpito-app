@@ -7,7 +7,7 @@ export const GROUP_ACTIVE_ID = '@Palpito:Group:ActiveId';
 export const fetchGroups = async () => {
   let accessToken = await currentSignedUser();
 
-  return fetch('http://palpito.com.br/grupos.json', {
+  return fetch('http://www.palpito.com.br/grupos.json', {
     headers: { Authorization: `Bearer ${accessToken}` }
   }).then((response) => response.json())
   .catch((error) => {
@@ -29,6 +29,9 @@ export const setActiveGroup = (groupId) => {
   });
 };
 
+export const delActiveGroup = async () => {
+  await AsyncStorage.removeItem(GROUP_ACTIVE_ID);
+};
 
 export const getActiveGroup = () => {
   return new Promise((resolve, reject) => {
