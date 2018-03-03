@@ -1,22 +1,33 @@
 import React, { Component } from 'react';
-import { Button, Container, Content, Form, Input, Item, Header, Text } from 'native-base';
+import { Button, Container, Content, Form, Input, Item, Header, Spinner, Text } from 'native-base';
+import { LoginButton } from 'react-native-fbsdk';
 
-import { onSignIn } from '../actions/auth';
+import { onFacebookSignIn, onSignIn } from '../actions/auth';
 
 export default class SignIn extends Component {
   state = {
     email:    '',
     password: '',
-    loading:  false,
+    loginLoading:  false,
+    facebookLoginLoading:  false,
   }
 
-  _onPress() {
-    this.setState({ loading: true });
+  async facebookLogin() {
+    this.setState({ facebookLoginLoading: true });
 
-    onSignIn(this.state.email, this.state.password)
-      .then(accessToken => this.props.navigation.navigate('SignedIn'));
+    const isLogged = await onFacebookSignIn();
+    if (isLogged) this.props.navigation.navigate('SignedIn');
 
-    this.setState({ loading: false });
+    this.setState({ facebookLoginLoading: false });
+  }
+
+  async login() {
+    this.setState({ loginLoading: true });
+
+    const isLogged = await onSignIn(this.state.email, this.state.password);
+    if (isLogged) this.props.navigation.navigate('SignedIn');
+
+    this.setState({ loginLoading: false });
   }
 
   render() {
@@ -46,9 +57,15 @@ export default class SignIn extends Component {
               />
             </Item>
 
-            <Button full onPress={() => this._onPress()}>
-              <Text>Entrar!</Text>
-              {this.state.loading &&
+            <Button full onPress={() => this.login()}>
+              <Text>Entrar</Text>
+              {this.state.loginLoading &&
+                <Spinner />}
+            </Button>
+
+            <Button full style={{ marginTop: 10, backgroundColor: '#3b5998' }} onPress={() => this.facebookLogin()}>
+              <Text>Entrar com Facebook</Text>
+              {this.state.facebookLoginLoading &&
                 <Spinner />}
             </Button>
           </Form>
