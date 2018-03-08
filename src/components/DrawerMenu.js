@@ -17,8 +17,8 @@ export class DrawerMenu extends Component {
 
   async refreshGroups() {
     this.setState({ refreshing: true });
-    let groups = await fetchGroups();
-    this.setState({ groups, refreshing: false });
+    const groups = await fetchGroups();
+    this.setState({ groups: groups.groups, refreshing: false });
   }
 
   _renderRow(group) {
