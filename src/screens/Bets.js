@@ -65,13 +65,13 @@ export default class Bets extends Component {
 
     this.setState({ accessToken });
     let bets = await this.requestBets();
-    this.setState({ bets, refreshing: false });
+    this.setState({ bets: bets.bets, refreshing: false });
   }
 
   requestBets() {
     let groupId = this.state.activeGroupId;
 
-    let url = 'http://palpito.com.br/bets.json';
+    let url = 'http://palpito.com.br/api/bets.json';
     let filter = isNaN(parseInt(groupId)) ? '' : `group_id=${groupId}`;
 
     return fetch(`${url}?${filter}`, {
